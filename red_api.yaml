@@ -61,6 +61,8 @@ paths:
   /rewards/{reward_id}:
     get:
       summary: Get a reward by id
+      tags:
+      - rewards
       parameters:
       - name: reward_id
         required: true
