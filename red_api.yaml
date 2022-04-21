@@ -1,0 +1,149 @@
+openapi: 3.0.1
+info:
+  title: Virgin Red API
+  description: 'This is the Virgin Red API'
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: chris.mcdowell@red.virgin.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+- url: https://api.partners.red.virgin.com/v1
+tags:
+- name: rewards
+  description: Everything about rewards
+  externalDocs:
+    description: Find out more
+    url: http://swagger.io
+paths:
+  /rewards:
+    get:
+      tags:
+      - rewards
+      summary: Get all rewards
+      description: Get rewards
+      operationId: findPetsByStatus
+      parameters:
+      - name: region
+        in: query
+        description: Region that the rewards are abailable in
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: array
+          items:
+            type: string
+            default: en_gb
+            enum:
+            - en_gb
+            - en_us
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Reward'
+        400:
+          description: Invalid status value
+          content: {}
+      security:
+      - petstore_auth:
+        - write:pets
+        - read:pets
+
+components:
+  schemas:
+    Reward:
+      required:
+      - id
+      - photoUrls
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        category:
+          $ref: '#/components/schemas/Category'
+        name:
+          type: string
+          example: Virgin Wines Mixed Case
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/Image'
+        type:
+          type: string
+          description: the type of reward
+          enum:
+           - earn
+           - spend
+        regions:
+          type: array
+          items:
+            enum:
+            - en_gb
+            - en_us
+        tags:
+          type: array
+          items:
+            enum:
+            - content.alcohol
+            - content.gambling
+            - content.popular
+        status:
+          type: string
+          description: pet status in the store
+          enum:
+          - active
+          - inactive
+    Category:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          description: The name of the category in English
+          type: string
+          example: Travel
+    Image:
+      required:
+      - id
+      - url
+      - alt_text
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        url:
+          type: string
+          format: url
+          example: https://images.ctfassets.net/Virgin_Red_Exclusive_Six_Bottle_Red_Wine_Case_1920x640.jpg
+        alt_text:
+          type: string
+          example: Mixed case of red wines
+
+  securitySchemes:
+    petstore_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: http://petstore.swagger.io/oauth/dialog
+          scopes:
+            write:pets: modify pets in your account
+            read:pets: read your pets
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
+
