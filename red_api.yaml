@@ -27,7 +27,6 @@ paths:
       - rewards
       summary: Get all rewards
       description: Get rewards
-      operationId: findPetsByStatus
       parameters:
       - name: region
         in: query
@@ -59,6 +58,26 @@ paths:
       - petstore_auth:
         - write:pets
         - read:pets
+  /rewards/{reward_id}:
+    get:
+      summary: Get a reward by id
+      parameters:
+      - name: reward_id
+        required: true
+        in: path
+        schema:
+          type: string
+          format: uuid
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reward'
+        404:
+          description: reward not found
+          content: {}
 
 components:
   schemas:
